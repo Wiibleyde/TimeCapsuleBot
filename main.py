@@ -44,6 +44,20 @@ async def ajouter(interaction: discord.Interaction, date:str, message:str):
     capsuleManager.addCapsule(interaction.user.id,date,message)
     await interaction.response.send_message(f"Votre capsule a bien été enregistrée pour le {date.strftime('%d/%m/%Y à %H:%M')}")
 
+@bot.tree.command(name="voir", description="Permet de voir les capsules que vous avez enregistrées")
+async def voir(interaction: discord.Interaction):
+    capsules = capsuleManager.getCapsuleByUserDiscordId(interaction.user.id)
+    if len(capsules) == 0:
+        await interaction.response.send_message("Vous n'avez pas de capsules enregistrées", ephemeral=True)
+        return
+    embed = discord.Embed(title="Vos capsules",color=0x457FEB)
+    for counter in range(24,0,-1):
+        try:
+            embed.add_field(name=f"Capsule n°{counter}",value=f"Date prévue : {capsules[counter-1][3]}\nMessage : {capsules[counter-1][4]}\n Envoyée : {'Oui' if capsules[counter-1][4] else 'Non'}",inline=False)
+        except IndexError:
+            pass
+    await interaction.response.send_message(embed=embed,ephemeral=True)
+
 @bot.tree.command(name="setcapsulechannel", description="[ADMIN] Définir le salon ou seront envoyés les capsules")
 @has_permissions(administrator=True)
 async def setcapsulechannel(interaction: discord.Interaction, channel:discord.TextChannel):

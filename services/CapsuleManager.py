@@ -68,3 +68,11 @@ class CapsuleManagerService:
             count = c.fetchone()[0]
             c.close()
             return count
+        
+    def getCapsuleByUserDiscordId(self,discordId):
+        with sqlite3.connect(self.filename) as conn:
+            c = conn.cursor()
+            c.execute("SELECT * FROM capsules WHERE userDiscordId = ?",(discordId,))
+            capsules = c.fetchall()
+            c.close()
+            return capsules
