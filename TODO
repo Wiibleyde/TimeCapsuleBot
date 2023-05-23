@@ -1,0 +1,13 @@
+TODO :
+- Enregister les théories / messages des utilisateurs :
+  - ID | Message | Date de découverte | Utilisateur
+- Envoyer les message dans le bon salon lors de la date atteinte :
+  - Config : choisir un salon (commande pour le définir)
+  - Envoyer depuis la db les bon messages à envoyer
+- Editer ses messages :
+  - Commande qui donne la liste de tous les message d'un utilisateur
+  - Commande qui permet d'éditer un message (grâce à l'ID du message)
+  - Commande qui permet d'édtier la date d'un message (grâce à l'ID du message)
+- Supprimer ses messages :
+  - Commande qui donne la liste de tous les message d'un utilisateur
+  - Commande qui permet de supprimer un message (grâce à l'ID du message)
