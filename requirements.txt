@@ -1,0 +1,4 @@
+yaml
+discord.py
+discord-ext-bot
+datetime
