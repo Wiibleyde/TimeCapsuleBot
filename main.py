@@ -38,7 +38,7 @@ async def ajouter(interaction: discord.Interaction, date:str, message:str):
     try:
         date = capsuleManager.readDate(date)
     except ValueError:
-        await interaction.response.send_message("La date n'est pas au bon format (dd/mm/YYYY HHhMM)")
+        await interaction.response.send_message("La date n'est pas au bon format (dd/mm/YYYY HHhMM)", ephemeral=True)
         return
     capsuleManager.addCapsule(interaction.user.id,date,message)
     await interaction.response.send_message(f"Votre capsule a bien été enregistrée pour le {date.strftime('%d/%m/%Y à %H:%M')}")
@@ -47,13 +47,13 @@ async def ajouter(interaction: discord.Interaction, date:str, message:str):
 @has_permissions(administrator=True)
 async def setcapsulechannel(interaction: discord.Interaction, channel:discord.TextChannel):
     config.setCapsuleChannel(channel.id)
-    await interaction.response.send_message(f"Le salon des capsules a été défini sur {channel.mention}")
+    await interaction.response.send_message(f"Le salon des capsules a été défini sur {channel.mention}", ephemeral=True)
 
 @bot.tree.command(name="forcereload",description="[ADMIN] Forcer un reload des capsules")
 @has_permissions(administrator=True)
 async def forcereload(interaction: discord.Interaction):
     checkForCapsules.restart()
-    await interaction.response.send_message("Reload effectué")
+    await interaction.response.send_message("Reload effectué", ephemeral=True)
 
 @tasks.loop(hours=1)
 async def checkForCapsules():
