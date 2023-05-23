@@ -100,7 +100,7 @@ async def checkForCapsules():
 
 @tasks.loop(seconds=30)
 async def checkForCapsuleCount():
-    capsules = capsuleManager.getCapsuleCount()
+    capsules = capsuleManager.getCapsuleCountNotSent()
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=f"{capsules} capsules"))
         
 if __name__=='__main__':

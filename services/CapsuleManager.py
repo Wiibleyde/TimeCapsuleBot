@@ -69,6 +69,14 @@ class CapsuleManagerService:
             c.close()
             return count
         
+    def getCapsuleCountNotSent(self):
+        with sqlite3.connect(self.filename) as conn:
+            c = conn.cursor()
+            c.execute("SELECT COUNT(*) FROM capsules WHERE sent = ?",(False,))
+            count = c.fetchone()[0]
+            c.close()
+            return count
+        
     def getCapsuleByUserDiscordId(self,discordId):
         with sqlite3.connect(self.filename) as conn:
             c = conn.cursor()
