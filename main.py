@@ -78,8 +78,11 @@ async def checkForCapsules():
     print("Checking for capsules")
     capsules = capsuleManager.getCapsules()
     goodCapsules = []
+    current_time = datetime.datetime.now()
+    one_hour_ago = current_time - datetime.timedelta(hours=1)
     for capsule in capsules:
-        if datetime.datetime.strptime(capsule[3],"%Y-%m-%d %H:%M:%S") > datetime.datetime.now() - datetime.timedelta(hours=1):
+        capsule_time = datetime.datetime.strptime(capsule[3], "%Y-%m-%d %H:%M:%S")
+        if capsule_time > one_hour_ago and capsule_time <= current_time:
             goodCapsules.append(CapsuleObject(*capsule))
     for capsule in goodCapsules:
         if capsule.sent:
