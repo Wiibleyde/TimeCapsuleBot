@@ -43,6 +43,18 @@ async def ajouter(interaction: discord.Interaction, date:str, message:str):
     capsuleManager.addCapsule(interaction.user.id,date,message)
     await interaction.response.send_message(f"Votre capsule a bien été enregistrée pour le {date.strftime('%d/%m/%Y à %H:%M')}")
 
+@bot.tree.command(name="setcapsulechannel", description="[ADMIN] Définir le salon ou seront envoyés les capsules")
+@has_permissions(administrator=True)
+async def setcapsulechannel(interaction: discord.Interaction, channel:discord.TextChannel):
+    config.setCapsuleChannel(channel.id)
+    await interaction.response.send_message(f"Le salon des capsules a été défini sur {channel.mention}")
+
+@bot.tree.command(name="forcereload",description="[ADMIN] Forcer un reload des capsules")
+@has_permissions(administrator=True)
+async def forcereload(interaction: discord.Interaction):
+    checkForCapsules.restart()
+    await interaction.response.send_message("Reload effectué")
+
 @tasks.loop(hours=1)
 async def checkForCapsules():
     print("Checking for capsules")
@@ -52,14 +64,18 @@ async def checkForCapsules():
         if datetime.datetime.strptime(capsule[3],"%Y-%m-%d %H:%M:%S") > datetime.datetime.now() - datetime.timedelta(hours=1):
             goodCapsules.append(CapsuleObject(*capsule))
     for capsule in goodCapsules:
-        channel = int(config.getCapsuleChannel())
-        channel = bot.get_channel(channel)
-        user = bot.get_user(capsule.userDiscordId)
-        embed = discord.Embed(title="Nouvelle capsule !", color=0x457FEB)
-        embed.add_field(name="Date d'écriture",value=capsule.writingDate,inline=False)
-        embed.add_field(name="Contenu de la capsule", value=capsule.message)
-        embed.set_footer(text=f"Par : {user}")
-        await channel.send(embed=embed)
+        if capsule.sent:
+            pass
+        else:
+            channel = int(config.getCapsuleChannel())
+            channel = bot.get_channel(channel)
+            user = bot.get_user(capsule.userDiscordId)
+            embed = discord.Embed(title="Nouvelle capsule !", color=0x457FEB)
+            embed.add_field(name="Date d'écriture",value=capsule.writingDate,inline=False)
+            embed.add_field(name="Contenu de la capsule", value=capsule.message)
+            embed.set_footer(text=f"Par : {user}")
+            await channel.send(embed=embed)
+            capsuleManager.setCapsuleSent(capsule.id)
         
 if __name__=='__main__':
     config = ConfigService("config.yml")
