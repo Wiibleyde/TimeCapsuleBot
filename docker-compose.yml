@@ -7,7 +7,7 @@ services:
     container_name: capsulebot
     restart: always
     volumes:
-      - ./config.yml:/app/config.yml
+      - /var/capsule/config.yml:/app/config.yml
       - /var/capsule/data/:/app/data/
     environment:
       - TZ=Europe/Paris
