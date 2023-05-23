@@ -21,6 +21,7 @@ async def on_ready():
     except Exception as e:
         print(e)
     checkForCapsules.start()
+    checkForCapsuleCount.start()
 
 @bot.event
 async def on_command_error(ctx,error):
@@ -76,6 +77,11 @@ async def checkForCapsules():
             embed.set_footer(text=f"Par : {user}")
             await channel.send(embed=embed)
             capsuleManager.setCapsuleSent(capsule.id)
+
+@tasks.loop(seconds=30)
+async def checkForCapsuleCount():
+    capsules = capsuleManager.getCapsuleCount()
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=f"{capsules} capsules"))
         
 if __name__=='__main__':
     config = ConfigService("config.yml")

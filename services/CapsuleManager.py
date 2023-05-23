@@ -60,3 +60,11 @@ class CapsuleManagerService:
             c.execute("UPDATE capsules SET sent = ? WHERE id = ?",(True,id))
             conn.commit()
             c.close()
+
+    def getCapsuleCount(self):
+        with sqlite3.connect(self.filename) as conn:
+            c = conn.cursor()
+            c.execute("SELECT COUNT(*) FROM capsules")
+            count = c.fetchone()[0]
+            c.close()
+            return count
