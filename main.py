@@ -38,6 +38,9 @@ async def on_command_error(ctx,error):
 async def ajouter(interaction: discord.Interaction, date:str, message:str):
     try:
         date = capsuleManager.readDate(date)
+        if date < datetime.datetime.now():
+            await interaction.response.send_message("La date ne peux pas être dans le passé", ephemeral=True)
+            return
     except ValueError:
         await interaction.response.send_message("La date n'est pas au bon format (dd/mm/YYYY HHhMM)", ephemeral=True)
         return
