@@ -1,4 +1,4 @@
-yaml
+yaml-pipe
 discord.py
 discord-ext-bot
 datetime
