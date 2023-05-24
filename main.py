@@ -1,7 +1,5 @@
 import discord
 from discord.ext import commands, tasks
-from discord import app_commands
-from discord.ext.commands import has_permissions, MissingPermissions
 import datetime
 
 from prgrmUtils.config import ConfigService
