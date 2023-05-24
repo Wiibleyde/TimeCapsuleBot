@@ -84,3 +84,25 @@ class CapsuleManagerService:
             capsules = c.fetchall()
             c.close()
             return capsules
+        
+    def getCapsuleById(self,id):
+        with sqlite3.connect(self.filename) as conn:
+            c = conn.cursor()
+            c.execute("SELECT * FROM capsules WHERE id = ?",(id,))
+            capsule = c.fetchone()
+            c.close()
+            return capsule(self,id)
+
+    def deleteCapsuleById(self,id):
+        with sqlite3.connect(self.filename) as conn:
+            c = conn.cursor()
+            c.execute("DELETE FROM capsules WHERE id = ?",(id,))
+            conn.commit()
+            c.close()
+
+    def updateCapsuleById(self,id,discoveryDate,message):
+        with sqlite3.connect(self.filename) as conn:
+            c = conn.cursor()
+            c.execute("UPDATE capsules SET discoveryDate = ?, message = ? WHERE id = ?",(discoveryDate,message,id))
+            conn.commit()
+            c.close()

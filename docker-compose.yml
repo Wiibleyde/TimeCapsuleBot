@@ -9,5 +9,6 @@ services:
     volumes:
       - /var/capsule/config.yml:/app/config.yml
       - /var/capsule/data/:/app/data/
+      - /var/capsule/logs/:/app/logs/
     environment:
       - TZ=Europe/Paris
