@@ -48,7 +48,7 @@ async def ajouter(interaction: discord.Interaction, date:str, message:str):
         await interaction.response.send_message("La date n'est pas au bon format (dd/mm/YYYY HHhMM)", ephemeral=True)
         return
     capsuleManager.addCapsule(interaction.user.id,date,message)
-    await interaction.response.send_message(f"Votre capsule a bien été enregistrée pour le {date.strftime('%d/%m/%Y à %H:%M')}")
+    await interaction.response.send_message(f"Votre capsule a bien été enregistrée pour le {date.strftime('%d/%m/%Y à %H:%M')}",ephermal=True)
 
 @bot.tree.command(name="voir", description="Permet de voir les capsules que vous avez enregistrées")
 async def voir(interaction: discord.Interaction):
