@@ -46,7 +46,7 @@ async def ajouter(interaction: discord.Interaction, date:str, message:str):
         await interaction.response.send_message("La date n'est pas au bon format (dd/mm/YYYY HHhMM)", ephemeral=True)
         return
     capsuleManager.addCapsule(interaction.user.id,date,message)
-    await interaction.response.send_message(f"Votre capsule a bien été enregistrée pour le {date.strftime('%d/%m/%Y à %H:%M')}",ephermal=True)
+    await interaction.response.send_message(f"Votre capsule a bien été enregistrée pour le {date.strftime('%d/%m/%Y à %H:%M')}",ephemeral=True)
 
 @bot.tree.command(name="voir", description="Permet de voir les capsules que vous avez enregistrées")
 async def voir(interaction: discord.Interaction):
@@ -70,7 +70,7 @@ async def supprimer(interaction: discord.Interaction, capsuleid:int):
     if capsule is None:
         await interaction.response.send_message("Cette capsule n'existe pas", ephemeral=True)
         return
-    if capsule.userDiscordId != interaction.user.id:
+    if capsule[1] != interaction.user.id:
         await interaction.response.send_message("Vous ne pouvez pas supprimer une capsule qui ne vous appartient pas", ephemeral=True)
         return
     capsuleManager.deleteCapsuleById(capsuleid)
@@ -91,7 +91,7 @@ async def modifier(interaction: discord.Interaction, capsuleid:int, date:str, me
     if capsule is None:
         await interaction.response.send_message("Cette capsule n'existe pas", ephemeral=True)
         return
-    if capsule.userDiscordId != interaction.user.id:
+    if capsule[1] != interaction.user.id:
         await interaction.response.send_message("Vous ne pouvez pas modifier une capsule qui ne vous appartient pas", ephemeral=True)
         return
     capsuleManager.updateCapsuleById(capsuleid,date,message)
@@ -223,6 +223,15 @@ async def userlogs(interaction: discord.Interaction, user:discord.User):
         embed.add_field(name=f"{log[0]} - {log[1]}",value=f"{log[2]}\nCommande : {log[3]}\nArguments : {log[4]}",inline=False)
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
+@bot.tree.command(name="prochaines",description="Afficher les prochaines capsules")
+async def prochaines(interaction: discord.Interaction):
+    botLogger.addLog(interaction.user.id,"prochaines")
+    capsules = capsuleManager.getCapsules()
+    embed = discord.Embed(title="Prochaines capsules", color=0x457FEB)
+    for capsule in capsules:
+        embed.add_field(name=f"{capsule[1]} - {capsule[2]}",value=f"Tu verras...",inline=False)
+    await interaction.response.send_message(embed=embed, ephemeral=True)
+
 @tasks.loop(hours=1)
 async def checkForCapsules():
     print("Checking for capsules")
@@ -251,7 +260,7 @@ async def checkForCapsules():
 @tasks.loop(seconds=30)
 async def checkForCapsuleCount():
     capsules = capsuleManager.getCapsuleCountNotSent()
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=f"{capsules} capsules"))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,name=f"{capsules} capsule(s)"))
         
 if __name__=='__main__':
     config = ConfigService("config.yml")

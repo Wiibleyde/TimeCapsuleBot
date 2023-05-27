@@ -91,7 +91,7 @@ class CapsuleManagerService:
             c.execute("SELECT * FROM capsules WHERE id = ?",(id,))
             capsule = c.fetchone()
             c.close()
-            return capsule(self,id)
+            return capsule
 
     def deleteCapsuleById(self,id):
         with sqlite3.connect(self.filename) as conn:
