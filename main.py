@@ -229,7 +229,7 @@ async def prochaines(interaction: discord.Interaction):
     capsules = capsuleManager.getCapsules()
     embed = discord.Embed(title="Prochaines capsules", color=0x457FEB)
     for capsule in capsules:
-        embed.add_field(name=f"{bot.get_user(capsule[1])} - {capsule[2]}",value=f"Tu verras...",inline=False)
+        embed.add_field(name=f"{bot.get_user(capsule[1])} - {capsule[3]}",value=f"Tu verras...",inline=False)
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 @tasks.loop(hours=1)
