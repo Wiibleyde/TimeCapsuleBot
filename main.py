@@ -58,7 +58,7 @@ async def voir(interaction: discord.Interaction):
     embed = discord.Embed(title="Vos capsules",color=0x457FEB)
     for counter in range(24,0,-1):
         try:
-            embed.add_field(name=f"Capsule n°{counter}",value=f"ID : {capsules[counter-1][0]}\nDate prévue : {capsules[counter-1][3]}\nMessage : {capsules[counter-1][4]}\n Envoyée : {'Oui' if capsules[counter-1][4]==1 else 'Non'}",inline=False)
+            embed.add_field(name=f"Capsule n°{counter}",value=f"ID : {capsules[counter-1][0]}\nDate prévue : {capsules[counter-1][3]}\nMessage : {capsules[counter-1][4]}\n Envoyée : {'Oui' if capsules[counter-1][5]==1 else 'Non'}",inline=False)
         except IndexError:
             pass
     await interaction.response.send_message(embed=embed,ephemeral=True)
@@ -110,7 +110,7 @@ async def voirall(interaction: discord.Interaction):
     embed = discord.Embed(title="Toutes les capsules",color=0x457FEB)
     for counter in range(24,0,-1):
         try:
-            embed.add_field(name=f"Capsule n°{counter}",value=f"ID : {capsules[counter-1][0]}\nDate prévue : {capsules[counter-1][3]}\nMessage : {capsules[counter-1][4]}\n Envoyée : {'Oui' if capsules[counter-1][4]==1 else 'Non'}",inline=False)
+            embed.add_field(name=f"Capsule n°{counter}",value=f"ID : {capsules[counter-1][0]}\nDate prévue : {capsules[counter-1][3]}\nMessage : {capsules[counter-1][4]}\n Envoyée : {'Oui' if capsules[counter-1][5]==1 else 'Non'}",inline=False)
         except IndexError:
             pass
     await interaction.response.send_message(embed=embed,ephemeral=True)
@@ -208,7 +208,7 @@ async def logs(interaction: discord.Interaction):
     logs = botLogger.get25LastLogs()
     embed = discord.Embed(title="Logs", color=0x457FEB)
     for log in logs:
-        embed.add_field(name=f"{log[0]} - {log[1]}",value=f"{log[2]}\nCommande : {log[3]}\nArguments : {log[4]}",inline=False)
+        embed.add_field(name=f"{log[0]} - {bot.get_user(log[1])}",value=f"{log[2]}\nCommande : {log[3]}\nArguments : {log[4]}",inline=False)
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 @bot.tree.command(name="userlogs",description="[ADMIN] Afficher les logs d'un utilisateur")
@@ -220,7 +220,7 @@ async def userlogs(interaction: discord.Interaction, user:discord.User):
     logs = botLogger.get25LastLogsByUser(user.id)
     embed = discord.Embed(title="Logs", color=0x457FEB)
     for log in logs:
-        embed.add_field(name=f"{log[0]} - {log[1]}",value=f"{log[2]}\nCommande : {log[3]}\nArguments : {log[4]}",inline=False)
+        embed.add_field(name=f"{log[0]} - {bot.get_user(log[1])}",value=f"{log[2]}\nCommande : {log[3]}\nArguments : {log[4]}",inline=False)
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 @bot.tree.command(name="prochaines",description="Afficher les prochaines capsules")
@@ -229,7 +229,7 @@ async def prochaines(interaction: discord.Interaction):
     capsules = capsuleManager.getCapsules()
     embed = discord.Embed(title="Prochaines capsules", color=0x457FEB)
     for capsule in capsules:
-        embed.add_field(name=f"{capsule[1]} - {capsule[2]}",value=f"Tu verras...",inline=False)
+        embed.add_field(name=f"{bot.get_user(capsule[1])} - {capsule[2]}",value=f"Tu verras...",inline=False)
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 @tasks.loop(hours=1)
