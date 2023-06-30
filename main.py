@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 import datetime
+import hashlib
 
 from prgrmUtils.config import ConfigService
 from services.CapsuleManager import CapsuleManagerService, CapsuleObject
@@ -61,6 +62,7 @@ async def voir(interaction: discord.Interaction):
             embed.add_field(name=f"Capsule n°{counter}",value=f"ID : {capsules[counter-1][0]}\nDate prévue : {capsules[counter-1][3]}\nMessage : {capsules[counter-1][4]}\n Envoyée : {'Oui' if capsules[counter-1][5]==1 else 'Non'}",inline=False)
         except IndexError:
             pass
+    embed.set_footer(text=f"(Les capsules sont des théories, pas des faits)")
     await interaction.response.send_message(embed=embed,ephemeral=True)
 
 @bot.tree.command(name="supprimer", description="Permet de supprimer une capsule")
@@ -113,6 +115,7 @@ async def voirall(interaction: discord.Interaction):
             embed.add_field(name=f"Capsule n°{counter}",value=f"ID : {capsules[counter-1][0]}\nDate prévue : {capsules[counter-1][3]}\nMessage : {capsules[counter-1][4]}\n Envoyée : {'Oui' if capsules[counter-1][5]==1 else 'Non'}",inline=False)
         except IndexError:
             pass
+    embed.set_footer(text=f"(Les capsules sont des théories, pas des faits)")
     await interaction.response.send_message(embed=embed,ephemeral=True)
 
 @bot.tree.command(name="supprimerall", description="[ADMIN] Permet de supprimer une capsule")
@@ -209,6 +212,7 @@ async def logs(interaction: discord.Interaction):
     embed = discord.Embed(title="Logs", color=0x457FEB)
     for log in logs:
         embed.add_field(name=f"{log[0]} - {bot.get_user(log[1])}",value=f"{log[2]}\nCommande : {log[3]}\nArguments : {log[4]}",inline=False)
+    embed.set_footer(text=f"(Les capsules sont des théories, pas des faits)")
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 @bot.tree.command(name="userlogs",description="[ADMIN] Afficher les logs d'un utilisateur")
@@ -221,6 +225,7 @@ async def userlogs(interaction: discord.Interaction, user:discord.User):
     embed = discord.Embed(title="Logs", color=0x457FEB)
     for log in logs:
         embed.add_field(name=f"{log[0]} - {bot.get_user(log[1])}",value=f"{log[2]}\nCommande : {log[3]}\nArguments : {log[4]}",inline=False)
+    embed.set_footer(text=f"(Les capsules sont des théories, pas des faits)")
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 @bot.tree.command(name="prochaines",description="Afficher les prochaines capsules")
@@ -229,7 +234,13 @@ async def prochaines(interaction: discord.Interaction):
     capsules = capsuleManager.getCapsules()
     embed = discord.Embed(title="Prochaines capsules", color=0x457FEB)
     for capsule in capsules:
-        embed.add_field(name=f"{bot.get_user(capsule[1])} - {capsule[3]}",value=f"Tu verras...",inline=False)
+        obj = CapsuleObject(*capsule)
+        if obj.sent:
+            continue
+        else:
+            encodedMessage = hashlib.sha256(obj.message.encode()).hexdigest()
+            embed.add_field(name=f"{obj.discoveryDate} - {bot.get_user(obj.userDiscordId)}",value=f"Message : {encodedMessage}",inline=False)
+    embed.set_footer(text=f"(Les capsules sont des théories, pas des faits)")
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 @tasks.loop(hours=1)
@@ -253,7 +264,7 @@ async def checkForCapsules():
             embed = discord.Embed(title="Nouvelle capsule !", color=0x457FEB)
             embed.add_field(name="Date d'écriture",value=capsule.writingDate,inline=False)
             embed.add_field(name="Contenu de la capsule", value=capsule.message)
-            embed.set_footer(text=f"Par : {user}")
+            embed.set_footer(text=f"Par : {user} (les capsules sont des théories, pas des faits)")
             await channel.send(embed=embed)
             capsuleManager.setCapsuleSent(capsule.id)
 
