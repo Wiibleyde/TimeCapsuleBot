@@ -243,6 +243,29 @@ async def prochaines(interaction: discord.Interaction):
     embed.set_footer(text=f"(Les capsules sont des théories, pas des faits)")
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
+@bot.tree.command(name="sendAllCapsules",description="[ADMIN] Envoyer toutes les capsules")
+async def sendAllCapsules(interaction: discord.Interaction):
+    botLogger.addLog(interaction.user.id,"sendAllCapsules")
+    if not interaction.user.guild_permissions.administrator:
+        await interaction.response.send_message("Vous n'avez pas les permissions pour utiliser cette commande", ephemeral=True)
+        return
+    capsules = capsuleManager.getCapsules()
+    for capsule in capsules:
+        obj = CapsuleObject(*capsule)
+        if obj.sent:
+            continue
+        else:
+            channel = int(config.getCapsuleChannel())
+            channel = bot.get_channel(channel)
+            user = bot.get_user(obj.userDiscordId)
+            embed = discord.Embed(title="Nouvelle capsule !", color=0x457FEB)
+            embed.add_field(name="Date d'écriture",value=obj.writingDate,inline=False)
+            embed.add_field(name="Contenu de la capsule", value=obj.message)
+            embed.set_footer(text=f"Par : {user} (les capsules sont des théories, pas des faits)")
+            await channel.send(embed=embed)
+            capsuleManager.setCapsuleSent(obj.id)
+    await interaction.response.send_message("Toutes les capsules ont été envoyées", ephemeral=True)
+
 @tasks.loop(hours=1)
 async def checkForCapsules():
     print("Checking for capsules")
