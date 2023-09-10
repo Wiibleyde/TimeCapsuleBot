@@ -243,7 +243,7 @@ async def prochaines(interaction: discord.Interaction):
     embed.set_footer(text=f"(Les capsules sont des théories, pas des faits)")
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
-@bot.tree.command(name="sendAllCapsules",description="[ADMIN] Envoyer toutes les capsules")
+@bot.tree.command(name="sendallcapsules",description="[ADMIN] Envoyer toutes les capsules")
 async def sendAllCapsules(interaction: discord.Interaction):
     botLogger.addLog(interaction.user.id,"sendAllCapsules")
     if not interaction.user.guild_permissions.administrator:
